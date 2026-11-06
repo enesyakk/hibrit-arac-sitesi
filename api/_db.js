@@ -1,6 +1,6 @@
 const { MongoClient, ObjectId, GridFSBucket } = require('mongodb');
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://nrd_admin:azXDs1FN8nqfJOOd@cluster0.z3giqcj.mongodb.net/uninotlar?authSource=admin&retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb+srv://nrd_admin:enesMert3778@cluster0.z3giqcj.mongodb.net/uninotlar?authSource=admin&retryWrites=true&w=majority";
 
 let cachedClient = null;
 let cachedDb = null;
