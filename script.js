@@ -1,23 +1,5 @@
 (function(){
-  // ============================================================================
-  // 🔥 FIREBASE YAPILANDIRMASI (Canlı Ortam)
-  // Firebase Console'dan (console.firebase.google.com) aldığın proje bilgilerini
-  // buraya yapıştırırsan tüm kullanıcılar ortak bulut veritabanını kullanır.
-  // Eğer henüz Firebase eklemediysen, site otomatik olarak TARAYICI YEREL MODUNDA
-  // sorunsuz çalışır (hiçbir şey çökmez, offline/demo olarak not yükleyip açabilirsin).
-  // ============================================================================
-  var firebaseConfig = {
-    apiKey: "AIzaSyD4CbprEhDTtT37FZ7SOXZa97TSXALYYWc",
-    authDomain: "noteshare-7ceeb.firebaseapp.com",
-    projectId: "noteshare-7ceeb",
-    storageBucket: "noteshare-7ceeb.firebasestorage.app",
-    messagingSenderId: "575757413162",
-    appId: "1:575757413162:web:10cd033a049ca6d9ac8c53"
-  };
-
   // Yönetici (Admin) Giriş Bilgileri:
-  // Not: Şifreni doğrudan buraya yazıp ("enes123" gibi) hemen yönetici olarak girebilirsin.
-  // Boş bırakırsan alttaki hash kontrolü devreye girer.
   var ADMIN_EMAIL = "enesyakk@gmail.com";
   var ADMIN_PASSWORD = ""; 
   var ADMIN_SALT = "d8454fbdd189156103408bb1b7a9c2a4";
@@ -145,9 +127,7 @@
       pf.appendChild(lk);pf.appendChild(el("span","sp"));
       if(n.size)pf.appendChild(el("span","tm",fmt(n.size)));
       var op=el("a",null,"Aç");op.href=fileUrl;op.target="_blank";op.rel="noopener";pf.appendChild(op);
-      if(!n.url&&n.asset&&assets&&assets.getUrl){
-        assets.getUrl(n.asset).then(function(u){if(u){cv.href=u;op.href=u}});
-      }
+      
       if(canAdmin||(myId&&n.uid===myId)){var d=el("button","del","Sil");d.onclick=function(){remove(n)};pf.appendChild(d)}
       if(myId&&n.uid!==myId&&!myRep[n.id]){var fl=el("button","flag","🚩 Bildir");fl.title="Zararlı veya uygunsuz içerik bildir";fl.onclick=function(){report(n.id)};pf.appendChild(fl)}
       if(canAdmin&&rep[n.id])pf.appendChild(el("span","tm","🚩 "+rep[n.id]));
@@ -395,7 +375,7 @@
       $("title").value="";$("file").value="";$("dropT").textContent="PDF seç ya da buraya sürükle";setMsg("Paylaşıldı ✓","ok");
       grade=$("grade").value;syncTabs();render();
     }catch(e){
-      var c=e&&e.code;setMsg(c==="too_large"?"Dosya çok büyük.":c==="quota_or_state"?"Depolama alanı dolu.":c==="rate_limited"?"Çok sık denedin, biraz bekle.":"Yükleme başarısız oldu.","err");
+      var c=e&&e.code;setMsg(c==="too_large"?"Dosya çok büyük.":c==="quota_or_state"?"Depolama alanı dolu.":c==="rate_limited"?"Çok sık denedin, biraz bekle.":"Yükleme başarısız oldu: "+(e.message||""),"err");
     }finally{b.disabled=false}
   }
 
@@ -415,181 +395,226 @@
   dz.addEventListener("drop",function(v){var f=v.dataTransfer&&v.dataTransfer.files[0];if(f){try{var d=new DataTransfer();d.items.add(f);$("file").files=d.files;picked()}catch(e){}}});
 
   // ============================================================================
-  // VERİTABANI VE DOSYA SİSTEMİ BAŞLATMA
+  // 🍃 MONGODB ATLAS & VERCEL SERVERLESS BACKEND ADAPTER
   // ============================================================================
-  function initLocalDB(){
-    function getCol(c){try{return JSON.parse(localStorage.getItem("hv_col_"+c)||"{}")}catch(e){return {}}}
-    function setCol(c,data){
-      try{
-        localStorage.setItem("hv_col_"+c,JSON.stringify(data));
-        window.dispatchEvent(new CustomEvent("hv_db_change",{detail:{col:c}}));
-      }catch(e){console.error("Yerel depolama hatası:",e)}
-    }
-    window.addEventListener("storage",function(e){
-      if(e.key&&e.key.indexOf("hv_col_")===0){
-        var c=e.key.replace("hv_col_","");
-        window.dispatchEvent(new CustomEvent("hv_db_change",{detail:{col:c}}));
+  function initMongoDB() {
+    async function apiFetch(endpoint, opts) {
+      opts = opts || {};
+      opts.headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+      var res = await fetch(endpoint, opts);
+      if (!res.ok) {
+        var errTxt = await res.text();
+        throw new Error(errTxt || 'API Hatası: ' + res.status);
       }
-    });
+      return res.json();
+    }
 
-    db={
-      collection:function(c){
-        var colName=c;
-        return {
-          doc:function(id){
-            return {
-              set:async function(data){
-                var col=getCol(colName);
-                col[id]=Object.assign({},data,{id:id});
-                setCol(colName,col);
-              },
-              delete:async function(){
-                var col=getCol(colName);
-                delete col[id];
-                setCol(colName,col);
-              }
-            };
-          },
-          add:async function(data){
-            var id="n_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
-            var col=getCol(colName);
-            col[id]=Object.assign({},data,{id:id});
-            setCol(colName,col);
-            return {id:id};
-          },
-          orderBy:function(field,dir){
-            return {
-              onSnapshot:function(cb,errCb){
-                function run(){
-                  var col=getCol(colName);
-                  var list=Object.keys(col).map(function(k){return col[k]});
-                  list.sort(function(a,b){
-                    var va=a[field]||"",vb=b[field]||"";
-                    return dir==="asc"?(va>vb?1:-1):(va<vb?1:-1);
-                  });
-                  cb({docs:list.map(function(item){return {id:item.id,data:function(){return item}}})});
+    db = {
+      collection: function(colName) {
+        if (colName === "notes") {
+          return {
+            doc: function(id) {
+              return {
+                delete: async function() {
+                  await apiFetch('/api/notes?id=' + encodeURIComponent(id), { method: 'DELETE' });
+                  window.dispatchEvent(new CustomEvent("mongo_refresh"));
                 }
-                run();
-                var handler=function(e){if(!e.detail||e.detail.col===colName)run()};
-                window.addEventListener("hv_db_change",handler);
-                return function(){window.removeEventListener("hv_db_change",handler)};
-              }
-            };
-          },
-          onSnapshot:function(cb,errCb){
-            function run(){
-              var col=getCol(colName);
-              var list=Object.keys(col).map(function(k){return col[k]});
-              cb({docs:list.map(function(item){return {id:item.id,data:function(){return item}}})});
+              };
+            },
+            add: async function(data) {
+              var created = await apiFetch('/api/notes', {
+                method: 'POST',
+                body: JSON.stringify(data)
+              });
+              window.dispatchEvent(new CustomEvent("mongo_refresh"));
+              return created;
+            },
+            orderBy: function(field, dir) {
+              return {
+                onSnapshot: function(cb, errCb) {
+                  async function poll() {
+                    try {
+                      var list = await apiFetch('/api/notes');
+                      cb({ docs: list.map(function(item) {
+                        return { id: item.id || item._id, data: function() { return item; } };
+                      }) });
+                    } catch(e) { if(errCb) errCb(e); }
+                  }
+                  poll();
+                  var t = setInterval(poll, 8000);
+                  window.addEventListener("mongo_refresh", poll);
+                  return function() { clearInterval(t); window.removeEventListener("mongo_refresh", poll); };
+                }
+              };
             }
-            run();
-            var handler=function(e){if(!e.detail||e.detail.col===colName)run()};
-            window.addEventListener("hv_db_change",handler);
-            return function(){window.removeEventListener("hv_db_change",handler)};
-          }
-        };
-      }
-    };
+          };
+        }
 
-    var localAssetMap={};
-    var idbPromise=new Promise(function(resolve){
-      if(!window.indexedDB)return resolve(null);
-      var req=indexedDB.open("HvLocalAssets",1);
-      req.onupgradeneeded=function(e){e.target.result.createObjectStore("files")};
-      req.onsuccess=function(e){resolve(e.target.result)};
-      req.onerror=function(){resolve(null)};
-    });
-
-    assets={
-      upload:async function(f){
-        var assetId="asset_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
-        var objectUrl=URL.createObjectURL(f);
-        localAssetMap[assetId]=objectUrl;
-        var idb=await idbPromise;
-        if(idb){
-          try{
-            var tx=idb.transaction("files","readwrite");
-            tx.objectStore("files").put(f,assetId);
-          }catch(e){}
-        }
-        return {id:assetId,url:objectUrl,sizeBytes:f.size};
-      },
-      delete:async function(assetId){
-        if(localAssetMap[assetId]){
-          try{URL.revokeObjectURL(localAssetMap[assetId])}catch(e){}
-          delete localAssetMap[assetId];
-        }
-        var idb=await idbPromise;
-        if(idb){
-          try{
-            var tx=idb.transaction("files","readwrite");
-            tx.objectStore("files").delete(assetId);
-          }catch(e){}
-        }
-      },
-      getUrl:async function(assetId){
-        if(localAssetMap[assetId])return localAssetMap[assetId];
-        var idb=await idbPromise;
-        if(idb){
-          return new Promise(function(resolve){
-            var tx=idb.transaction("files","readonly");
-            var req=tx.objectStore("files").get(assetId);
-            req.onsuccess=function(){
-              if(req.result){
-                var url=URL.createObjectURL(req.result);
-                localAssetMap[assetId]=url;
-                resolve(url);
-              }else{resolve("")}
-            };
-            req.onerror=function(){resolve("")};
-          });
-        }
-        return "";
-      }
-    };
-  }
-
-  async function initDB(){
-    var hasFirebase=typeof firebase!=="undefined"&&firebaseConfig&&firebaseConfig.projectId&&firebaseConfig.apiKey&&firebaseConfig.apiKey!=="BURAYA_API_KEY";
-    if(hasFirebase){
-      try{
-        if(!firebase.apps.length){
-          firebase.initializeApp(firebaseConfig);
-        }
-        db=firebase.firestore();
-        var storage=firebase.storage();
-        assets={
-          upload:async function(f,opts){
-            var cleanName=f.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-            var path="notes/"+Date.now()+"_"+cleanName;
-            var ref=storage.ref().child(path);
-            var snap=await ref.put(f,{contentType:(opts&&opts.type)||"application/pdf"});
-            var url=await snap.ref.getDownloadURL();
-            return {id:path,url:url,sizeBytes:f.size};
-          },
-          delete:async function(assetRef){
-            if(!assetRef)return;
-            try{
-              if(assetRef.startsWith("http")){
-                await storage.refFromURL(assetRef).delete();
-              }else{
-                await storage.ref(assetRef).delete();
+        if (colName === "accounts") {
+          return {
+            doc: function(id) {
+              return {
+                set: async function(data) {
+                  await apiFetch('/api/auth', {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'set', id: id, data: data })
+                  });
+                  window.dispatchEvent(new CustomEvent("mongo_auth_refresh"));
+                },
+                delete: async function() {
+                  await apiFetch('/api/auth', {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'delete', id: id })
+                  });
+                  window.dispatchEvent(new CustomEvent("mongo_auth_refresh"));
+                }
+              };
+            },
+            onSnapshot: function(cb, errCb) {
+              async function poll() {
+                try {
+                  var map = await apiFetch('/api/auth?action=list');
+                  var keys = Object.keys(map);
+                  cb({ docs: keys.map(function(k) {
+                    return { id: k, data: function() { return map[k]; } };
+                  }) });
+                } catch(e) { if(errCb) errCb(e); }
               }
-            }catch(e){console.warn("Storage silme uyarısı:",e)}
-          }
-        };
-        console.log("🔥 Firebase Firestore ve Storage başarıyla bağlandı!");
-        return;
-      }catch(err){
-        console.warn("Firebase bağlantısı başarısız, yerel moda geçiliyor:",err);
+              poll();
+              var t = setInterval(poll, 12000);
+              window.addEventListener("mongo_auth_refresh", poll);
+              return function() { clearInterval(t); window.removeEventListener("mongo_auth_refresh", poll); };
+            }
+          };
+        }
+
+        if (colName === "likes") {
+          return {
+            doc: function(id) {
+              return {
+                set: async function(data) {
+                  await apiFetch('/api/likes', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.assign({ id: id }, data))
+                  });
+                  window.dispatchEvent(new CustomEvent("mongo_likes_refresh"));
+                },
+                delete: async function() {
+                  await apiFetch('/api/likes', {
+                    method: 'POST',
+                    body: JSON.stringify({ id: id, remove: true })
+                  });
+                  window.dispatchEvent(new CustomEvent("mongo_likes_refresh"));
+                }
+              };
+            },
+            onSnapshot: function(cb, errCb) {
+              async function poll() {
+                try {
+                  var list = await apiFetch('/api/likes');
+                  cb({ docs: list.map(function(item) {
+                    return { id: item._id || item.id, data: function() { return item; } };
+                  }) });
+                } catch(e) { if(errCb) errCb(e); }
+              }
+              poll();
+              var t = setInterval(poll, 10000);
+              window.addEventListener("mongo_likes_refresh", poll);
+              return function() { clearInterval(t); window.removeEventListener("mongo_likes_refresh", poll); };
+            }
+          };
+        }
+
+        if (colName === "bans") {
+          return {
+            doc: function(id) {
+              return {
+                set: async function(data) {
+                  await apiFetch('/api/bans', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.assign({ uid: id }, data))
+                  });
+                  window.dispatchEvent(new CustomEvent("mongo_bans_refresh"));
+                }
+              };
+            },
+            onSnapshot: function(cb, errCb) {
+              async function poll() {
+                try {
+                  var map = await apiFetch('/api/bans');
+                  var keys = Object.keys(map);
+                  cb({ docs: keys.map(function(k) {
+                    return { id: k, data: function() { return { id: k }; } };
+                  }) });
+                } catch(e) { if(errCb) errCb(e); }
+              }
+              poll();
+              window.addEventListener("mongo_bans_refresh", poll);
+              return function() { window.removeEventListener("mongo_bans_refresh", poll); };
+            }
+          };
+        }
+
+        if (colName === "reports") {
+          return {
+            doc: function(id) {
+              return {
+                set: async function(data) {
+                  await apiFetch('/api/reports', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.assign({ id: id }, data))
+                  });
+                }
+              };
+            },
+            onSnapshot: function(cb, errCb) {
+              async function poll() {
+                try {
+                  var list = await apiFetch('/api/reports');
+                  cb({ docs: list.map(function(item) {
+                    return { id: item._id || item.id, data: function() { return item; } };
+                  }) });
+                } catch(e) { if(errCb) errCb(e); }
+              }
+              poll();
+              return function() {};
+            }
+          };
+        }
       }
-    }
-    console.log("ℹ️ Firebase yapılandırması girilmediği için yerel tarayıcı modunda çalışılıyor.");
-    initLocalDB();
+    };
+
+    assets = {
+      upload: async function(f) {
+        return new Promise(function(resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = async function() {
+            try {
+              var base64 = reader.result.split(',')[1];
+              var res = await apiFetch('/api/upload', {
+                method: 'POST',
+                body: JSON.stringify({
+                  name: f.name,
+                  base64: base64
+                })
+              });
+              resolve(res);
+            } catch(e) {
+              reject(e);
+            }
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(f);
+        });
+      },
+      delete: async function(assetId) {}
+    };
+
+    console.log("🍃 MongoDB Atlas Backend entegrasyonu aktif!");
   }
 
   async function init(){
-    await initDB();
+    initMongoDB();
     loadSession();
     renderMember();
     if(assets)$("send").disabled=false;
