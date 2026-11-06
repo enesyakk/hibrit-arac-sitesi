@@ -1,0 +1,8 @@
+{
+  "name": "uninotlar-platform",
+  "version": "1.0.0",
+  "description": "Universite Ders Notlari Platformu",
+  "dependencies": {
+    "mongodb": "^6.8.0"
+  }
+}
