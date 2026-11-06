@@ -5,19 +5,20 @@
 <script>try{if(localStorage.getItem("hv_theme")==="neon")document.documentElement.setAttribute("data-theme","neon")}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="author" content="NoRespect-Digital">
-<title>Hibrit Elektrikli Araçlar Bölümü – Ders Notları</title>
+<title>Üniversite Ders Notları Platformu – Tüm Üniversiteler ve Bölümler</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="hero"><div class="in">
   <div class="topbar"><button id="themeBtn" type="button">🌙 Koyu tema</button></div>
-  <h1>Hibrit Elektrikli Araçlar Bölümü</h1>
-  <p>Arkadaşlarının paylaştığı ders notlarını keşfet, beğen, kendi notlarını sınıfına göre paylaş. Not paylaşmak için üye olman gerekir.</p>
+  <span class="badge">🎓 Üniversite Ortak Not Havuzu</span>
+  <h1>Üniversite Ders Notları</h1>
+  <p>Türkiye'deki tüm üniversitelerden ders notlarını keşfet, vize ve final sınavlarına hazırlan, kendi notlarını paylaşarak arkadaşlarına destek ol.</p>
   <div class="credit">Yapan ve yazan: <b>NoRespect-Digital</b></div>
   <div class="stats">
-    <div class="stat"><b id="sN">0</b><span>Toplam not</span></div>
-    <div class="stat"><b id="s1">0</b><span>1. sınıf</span></div>
-    <div class="stat"><b id="s2">0</b><span>2. sınıf</span></div>
+    <div class="stat"><b id="sN">0</b><span>Toplam Not</span></div>
+    <div class="stat"><b id="sU">0</b><span>Üniversite</span></div>
+    <div class="stat"><b id="sC">0</b><span>Fakülte & Bölüm</span></div>
   </div>
 </div></div>
 
@@ -38,15 +39,35 @@
   </section>
 
   <section class="card" id="uploadCard" hidden>
-    <h2>📤 Not paylaş</h2>
-    <div class="row3">
-      <div><label class="l" for="grade">Sınıf</label>
-        <select id="grade"><option>1. Sınıf</option><option>2. Sınıf</option></select></div>
-      <div><label class="l" for="cat">Ders</label>
-        <select id="cat"></select></div>
-      <div><label class="l" for="by">Adın</label><input id="by" maxlength="40" placeholder="Giriş yapınca dolar" readonly></div>
+    <h2>📤 Not Paylaş</h2>
+    <div class="row">
+      <div>
+        <label class="l" for="uni">Üniversite</label>
+        <select id="uni"></select>
+      </div>
+      <div>
+        <label class="l" for="cat">Bölüm / Alan</label>
+        <select id="cat"></select>
+      </div>
     </div>
-    <label class="l" for="title">Başlık</label><input id="title" maxlength="120" placeholder="Örn. Hafta 3 – Li-ion batarya yönetimi">
+    <div class="row">
+      <div>
+        <label class="l" for="grade">Sınıf</label>
+        <select id="grade">
+          <option>1. Sınıf</option>
+          <option>2. Sınıf</option>
+          <option>3. Sınıf</option>
+          <option>4. Sınıf</option>
+          <option>Hazırlık / YL</option>
+        </select>
+      </div>
+      <div>
+        <label class="l" for="by">Adın</label>
+        <input id="by" maxlength="40" placeholder="Giriş yapınca dolar" readonly>
+      </div>
+    </div>
+    <label class="l" for="title">Ders Adı ve Konu Başlığı</label>
+    <input id="title" maxlength="120" placeholder="Örn. Diferansiyel Denklemler – Hafta 4 Laplace Dönüşümü">
     <label class="drop" id="drop" for="file">
       <div style="font-size:26px">📄</div>
       <strong id="dropT">PDF seç ya da buraya sürükle</strong>
@@ -60,62 +81,64 @@
   <section class="card" id="feedCard">
     <div class="bar">
       <div class="tabs" id="tabs">
-        <button data-g="" class="on">Keşfet</button>
+        <button data-g="" class="on">Tümü</button>
         <button data-g="1. Sınıf">1. Sınıf</button>
         <button data-g="2. Sınıf">2. Sınıf</button>
+        <button data-g="3. Sınıf">3. Sınıf</button>
+        <button data-g="4. Sınıf">4. Sınıf</button>
       </div>
       <button class="share" id="toggleUp">＋ Not paylaş</button>
     </div>
     <div class="tools">
-      <input id="q" type="search" placeholder="Not veya kişi ara…" aria-label="Ara">
-      <select id="fcat" aria-label="Ders"><option value="">Tüm konular</option></select>
+      <input id="q" type="search" placeholder="Ders, üniversite, konu veya kişi ara…" aria-label="Ara">
+      <select id="fcat" aria-label="Kategori"><option value="">Tüm Alanlar</option></select>
       <select id="sort" aria-label="Sırala"><option value="new">En yeni</option><option value="pop">En beğenilen</option></select>
     </div>
     <div class="feed" id="feed"><div class="empty">Yükleniyor…</div></div>
   </section>
 
   <section class="card">
-    <h2>📚 Dersler</h2>
-    <p class="lead">Bir derse dokun, o dersin notları yukarıda listelensin.</p>
+    <h2>📚 Alanlar ve Kategoriler</h2>
+    <p class="lead">Bir alana dokun, o alana ait ders notları yukarıda anında listelensin.</p>
     <div class="chips" id="chips"></div>
   </section>
 
   <section class="card">
-    <h2>🚙 Hibrit araç türleri</h2>
+    <h2>🎓 Üniversite Ortak Not Ağı</h2>
     <div class="grid">
-      <div class="info"><b>Mikro hibrit (MHEV)</b><p>Küçük bir elektrik sistemi (genelde 48 V) motora destek verir ve dur-kalk yapar. Tek başına elektrikle ilerleyemez.</p></div>
-      <div class="info"><b>Tam hibrit (HEV)</b><p>Elektrik motoru ve içten yanmalı motor birlikte çalışır. Kısa mesafe elektrikle gidebilir, batarya frenleme enerjisiyle dolar, prizden şarj edilmez.</p></div>
-      <div class="info"><b>Şarj edilebilir hibrit (PHEV)</b><p>Daha büyük bataryası vardır ve prizden şarj edilir. Kısa yolları elektrikle, uzun yolları benzinle alabilir.</p></div>
-      <div class="info"><b>Menzil uzatıcılı (EREV)</b><p>Tekerleği elektrik motoru döndürür, benzinli motor sadece jeneratör olarak bataryayı besler.</p></div>
+      <div class="info"><b>Tüm Bölümler Tek Çatıda</b><p>Mühendislik, Tıp, Hukuk, İİBF, Eğitim ve Fen-Edebiyat fakültelerinden ders notları bir arada.</p></div>
+      <div class="info"><b>Vize & Final Odaklı</b><p>Dönem içi özetler, çıkmış sınav soruları ve hocaların vurguladığı kritik konulara hızlı erişim.</p></div>
+      <div class="info"><b>Farklı Üniversiteleri Keşfet</b><p>Kendi okulunun yanı sıra İTÜ, ODTÜ, Boğaziçi gibi farklı üniversitelerin kaynaklarını incele.</p></div>
+      <div class="info"><b>%100 Öğrenci Dostu</b><p>Tamamen ücretsiz, reklamsız ve doğrudan tarayıcıdan hızlı PDF görüntüleme ve indirme imkanı.</p></div>
     </div>
   </section>
 
   <section class="card">
-    <h2>🔧 Hibrit mimariler</h2>
+    <h2>💡 Verimli Ders Çalışma Tüyoları</h2>
     <div class="grid3">
-      <div class="info"><b>Seri</b><p>Benzinli motor jeneratörü çalıştırır, tekerleği yalnızca elektrik motoru sürer.</p></div>
-      <div class="info"><b>Paralel</b><p>Hem içten yanmalı motor hem elektrik motoru tekerleği mekanik olarak sürebilir.</p></div>
-      <div class="info"><b>Seri-paralel</b><p>Güç paylaşım düzeneğiyle iki yapı bir arada kullanılır, sürüş koşuluna göre geçiş yapılır.</p></div>
+      <div class="info"><b>Cornell Metodu</b><p>Sayfayı ana fikirler, ders notları ve özet olarak 3 bölüme ayırarak akılda kalıcılığı ikiye katla.</p></div>
+      <div class="info"><b>Feynman Tekniği</b><p>Zor bir formülü veya kavramı hiç bilmeyen birine anlatır gibi en sade haliyle not çıkar.</p></div>
+      <div class="info"><b>Aktif Hatırlama</b><p>Sadece notu okumak yerine kendine soru-cevap kartları hazırlayarak sınav provası yap.</p></div>
     </div>
   </section>
 
   <section class="card">
     <h2>📝 Nasıl not paylaşırım?</h2>
     <ol class="steps">
-      <li><b>Not paylaş</b> butonuna bas.</li>
-      <li>Sınıfını, konuyu ve başlığı seç; PDF dosyanı ekle.</li>
-      <li><b>Paylaş</b>'a bas, not Keşfet'te herkese görünsün.</li>
+      <li><b>Not paylaş</b> butonuna bas (üye girişi gerekir).</li>
+      <li>Üniversiteni, bölümünü, sınıfını ve ders başlığını yaz; PDF dosyanı seç.</li>
+      <li><b>Paylaş</b>'a bas, not anında tüm üniversite öğrencilerinin erişimine açılsın.</li>
     </ol>
   </section>
 
   <section class="card">
     <h2>❓ Sık sorulan sorular</h2>
-    <details><summary>Hangi dosyaları yükleyebilirim?</summary><p>Yalnızca PDF, dosya başına en fazla 20 MB.</p></details>
-    <details><summary>Notu kim silebilir?</summary><p>Notu yükleyen kişi ve yönetici silebilir.</p></details>
-    <details><summary>Not paylaşamıyorum, neden?</summary><p>Önce Üye ol sekmesinden hesap oluşturup giriş yapmalısın. Sorun sürerse yöneticiye yaz.</p></details>
+    <details><summary>Hangi dosyaları yükleyebilirim?</summary><p>Yalnızca PDF formatında ders notu, özet veya çıkmış soru yükleyebilirsiniz (dosya başına en fazla 20 MB).</p></details>
+    <details><summary>Notu kim silebilir?</summary><p>Notu yükleyen kişi profilinden veya ilgili notun altındaki "Sil" butonundan her zaman silebilir; yöneticiler de uygunsuz içerikleri kaldırabilir.</p></details>
+    <details><summary>Hangi üniversiteler destekleniyor?</summary><p>Türkiye'deki tüm devlet ve vakıf üniversiteleri desteklenmektedir.</p></details>
   </section>
   <dialog id="pDlg"><div id="pBody"></div><button class="ghostb" id="pClose" style="width:100%;margin-top:14px">Kapat</button></dialog>
-  <footer>Hibrit Elektrikli Araçlar Bölümü · Ders notları arşivi<br>Yapan ve yazan: <b>NoRespect-Digital</b></footer>
+  <footer>Üniversite Ders Notları Platformu · Açık Not Arşivi<br>Geliştirici: <b>NoRespect-Digital</b></footer>
 </div>
 
 <!-- Firebase SDK (v10 compat) -->
