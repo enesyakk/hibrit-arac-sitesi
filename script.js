@@ -7,12 +7,12 @@
   // sorunsuz çalışır (hiçbir şey çökmez, offline/demo olarak not yükleyip açabilirsin).
   // ============================================================================
   var firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyD4CbprEhDTtT37FZ7SOXZa97TSXALYYWc",
+    authDomain: "noteshare-7ceeb.firebaseapp.com",
+    projectId: "noteshare-7ceeb",
+    storageBucket: "noteshare-7ceeb.firebasestorage.app",
+    messagingSenderId: "575757413162",
+    appId: "1:575757413162:web:10cd033a049ca6d9ac8c53"
   };
 
   // Yönetici (Admin) Giriş Bilgileri:
