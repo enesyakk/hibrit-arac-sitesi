@@ -1,14 +1,15 @@
-# Hibrit Elektrikli Araçlar Bölümü – Ders Notları Sitesi
+# Üniversite Ders Notları Platformu – Tüm Üniversiteler ve Bölümler
 
-Bu proje, Hibrit Elektrikli Araçlar Bölümü öğrencileri için ders notu paylaşımı, üyelik sistemi, PDF görüntüleme ve filtreleme özelliklerine sahip web platformudur.
+Bu proje, Türkiye'deki tüm üniversite öğrencileri için ders notu paylaşımı, üyelik sistemi, PDF görüntüleme ve filtreleme özelliklerine sahip açık kaynaklı web platformudur.
 
 ## 🚀 Özellikler
-- 📚 1. ve 2. sınıf derslerine göre kategorize edilmiş ders notları
-- 📄 PDF yükleme, önizleme ve indirme
-- 🌙 Koyu / Neon tema desteği
+- 🎓 Türkiye'deki tüm üniversiteler ve fakülteler (İTÜ, ODTÜ, Boğaziçi, YTÜ, İstanbul, Marmara vb.)
+- 📚 1, 2, 3, 4. sınıf ve lisansüstü derslerine göre filtreleme
+- 📄 Hızlı PDF yükleme, önizleme ve indirme
+- 🌙 Neon / Koyu tema desteği
 - 👤 Öğrenci kayıt, profil ve üyelik yönetimi
 - 🛡️ Yönetici paneli ve içerik denetimi
-- ⚡ Vercel için hazır yapılandırma (`vercel.json`)
+- ⚡ Vercel için tam optimize yapılandırma (`vercel.json`)
 
 ## 🛠️ Teknolojiler
 - HTML5, CSS3, JavaScript (Vanilla ES6+)
