@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script>try{if(localStorage.getItem("hv_theme")==="neon")document.documentElement.setAttribute("data-theme","neon")}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="NoRespect-Digital">
+<title>Hibrit Elektrikli Araçlar Bölümü – Ders Notları</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hero"><div class="in">
+  <div class="topbar"><button id="themeBtn" type="button">🌙 Koyu tema</button></div>
+  <h1>Hibrit Elektrikli Araçlar Bölümü</h1>
+  <p>Arkadaşlarının paylaştığı ders notlarını keşfet, beğen, kendi notlarını sınıfına göre paylaş. Not paylaşmak için üye olman gerekir.</p>
+  <div class="credit">Yapan ve yazan: <b>NoRespect-Digital</b></div>
+  <div class="stats">
+    <div class="stat"><b id="sN">0</b><span>Toplam not</span></div>
+    <div class="stat"><b id="s1">0</b><span>1. sınıf</span></div>
+    <div class="stat"><b id="s2">0</b><span>2. sınıf</span></div>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <section class="card" id="memberCard">
+    <h2>👤 Üyelik</h2>
+    <div id="memberBody"><p class="lead">Yükleniyor…</p></div>
+  </section>
+
+  <section class="card" id="profileCard" hidden>
+    <h2>🙍 Profilim</h2>
+    <div id="profileBody"></div>
+  </section>
+
+  <section class="card" id="adminCard" hidden>
+    <h2>🛡️ Üyeler <span class="meta" id="mCount"></span></h2>
+    <div id="mList"></div>
+  </section>
+
+  <section class="card" id="uploadCard" hidden>
+    <h2>📤 Not paylaş</h2>
+    <div class="row3">
+      <div><label class="l" for="grade">Sınıf</label>
+        <select id="grade"><option>1. Sınıf</option><option>2. Sınıf</option></select></div>
+      <div><label class="l" for="cat">Ders</label>
+        <select id="cat"></select></div>
+      <div><label class="l" for="by">Adın</label><input id="by" maxlength="40" placeholder="Giriş yapınca dolar" readonly></div>
+    </div>
+    <label class="l" for="title">Başlık</label><input id="title" maxlength="120" placeholder="Örn. Hafta 3 – Li-ion batarya yönetimi">
+    <label class="drop" id="drop" for="file">
+      <div style="font-size:26px">📄</div>
+      <strong id="dropT">PDF seç ya da buraya sürükle</strong>
+      <small>Yalnızca PDF · en fazla 20 MB</small>
+      <input id="file" type="file" accept="application/pdf,.pdf">
+    </label>
+    <button id="send" disabled>Paylaş</button>
+    <div class="msg" id="upMsg"></div>
+  </section>
+
+  <section class="card" id="feedCard">
+    <div class="bar">
+      <div class="tabs" id="tabs">
+        <button data-g="" class="on">Keşfet</button>
+        <button data-g="1. Sınıf">1. Sınıf</button>
+        <button data-g="2. Sınıf">2. Sınıf</button>
+      </div>
+      <button class="share" id="toggleUp">＋ Not paylaş</button>
+    </div>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Not veya kişi ara…" aria-label="Ara">
+      <select id="fcat" aria-label="Ders"><option value="">Tüm konular</option></select>
+      <select id="sort" aria-label="Sırala"><option value="new">En yeni</option><option value="pop">En beğenilen</option></select>
+    </div>
+    <div class="feed" id="feed"><div class="empty">Yükleniyor…</div></div>
+  </section>
+
+  <section class="card">
+    <h2>📚 Dersler</h2>
+    <p class="lead">Bir derse dokun, o dersin notları yukarıda listelensin.</p>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <section class="card">
+    <h2>🚙 Hibrit araç türleri</h2>
+    <div class="grid">
+      <div class="info"><b>Mikro hibrit (MHEV)</b><p>Küçük bir elektrik sistemi (genelde 48 V) motora destek verir ve dur-kalk yapar. Tek başına elektrikle ilerleyemez.</p></div>
+      <div class="info"><b>Tam hibrit (HEV)</b><p>Elektrik motoru ve içten yanmalı motor birlikte çalışır. Kısa mesafe elektrikle gidebilir, batarya frenleme enerjisiyle dolar, prizden şarj edilmez.</p></div>
+      <div class="info"><b>Şarj edilebilir hibrit (PHEV)</b><p>Daha büyük bataryası vardır ve prizden şarj edilir. Kısa yolları elektrikle, uzun yolları benzinle alabilir.</p></div>
+      <div class="info"><b>Menzil uzatıcılı (EREV)</b><p>Tekerleği elektrik motoru döndürür, benzinli motor sadece jeneratör olarak bataryayı besler.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🔧 Hibrit mimariler</h2>
+    <div class="grid3">
+      <div class="info"><b>Seri</b><p>Benzinli motor jeneratörü çalıştırır, tekerleği yalnızca elektrik motoru sürer.</p></div>
+      <div class="info"><b>Paralel</b><p>Hem içten yanmalı motor hem elektrik motoru tekerleği mekanik olarak sürebilir.</p></div>
+      <div class="info"><b>Seri-paralel</b><p>Güç paylaşım düzeneğiyle iki yapı bir arada kullanılır, sürüş koşuluna göre geçiş yapılır.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📝 Nasıl not paylaşırım?</h2>
+    <ol class="steps">
+      <li><b>Not paylaş</b> butonuna bas.</li>
+      <li>Sınıfını, konuyu ve başlığı seç; PDF dosyanı ekle.</li>
+      <li><b>Paylaş</b>'a bas, not Keşfet'te herkese görünsün.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>❓ Sık sorulan sorular</h2>
+    <details><summary>Hangi dosyaları yükleyebilirim?</summary><p>Yalnızca PDF, dosya başına en fazla 20 MB.</p></details>
+    <details><summary>Notu kim silebilir?</summary><p>Notu yükleyen kişi ve yönetici silebilir.</p></details>
+    <details><summary>Not paylaşamıyorum, neden?</summary><p>Önce Üye ol sekmesinden hesap oluşturup giriş yapmalısın. Sorun sürerse yöneticiye yaz.</p></details>
+  </section>
+  <dialog id="pDlg"><div id="pBody"></div><button class="ghostb" id="pClose" style="width:100%;margin-top:14px">Kapat</button></dialog>
+  <footer>Hibrit Elektrikli Araçlar Bölümü · Ders notları arşivi<br>Yapan ve yazan: <b>NoRespect-Digital</b></footer>
+</div>
+
+<!-- Firebase SDK (v10 compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
