@@ -23,51 +23,122 @@
   var ADMIN_SALT = "d8454fbdd189156103408bb1b7a9c2a4";
   var ADMIN_HASH = "da73fce81518492381d42d25673b9ccb91d403a1f0247cc75dda892faefc3f56";
 
-  var CATS=["Atatürk İlkeleri ve İnkılap Tarihi I", "Otomotiv Sistemleri", "Elektronik Teknolojisi II", "Elektronik Teknolojisi I", "Elektrik ve Hibrid Araç Teknolojisi I", "İçten Yanmalı Motorlar", "Motor Performansı", "Teknik Resim", "Elektrikli Araç Tahrik Sistemleri", "Mesleki Matematik", "İş Sağlığı ve Güvenliği", "Fizik", "Elektronik Devre Tasarımı", "Hareket Kontrol Sistemleri", "Ölçme Tekniği", "Asenkron ve Senkron Makinalar", "Elektro Kimya", "Enerji ve Çevre Koruma", "Araç Bakımı ve Muayene İşlemleri", "Elektrik ve Hibrid Araç Teknolojisi II", "Sensörler ve Kontrol Sistemleri", "Elektrik Motorları ve Kontrolü", "İlk Yardım", "Güvenlik ve Konfor Sistemleri", "Emisyon Kontrol Sistemleri", "Malzeme Teknolojisi", "Endüstriye Dayalı Eğitimi (EDE)", "Türk Dili I"];
-  var PAL=[["#1d5fd1","#12408f"],["#0f8fb8","#0a5a86"],["#4a5bd8","#2a2f9a"],["#2563eb","#1e3a8a"],["#0ea5c6","#1d6fa5"],["#3b82f6","#1d4ed8"]];
-  var AV=["#1d5fd1","#0f8fb8","#4a5bd8","#2a7fd4","#0ea5c6","#5b6fe0"];
+  var UNIS = [
+    "İstanbul Teknik Üniversitesi (İTÜ)",
+    "Orta Doğu Teknik Üniversitesi (ODTÜ)",
+    "Boğaziçi Üniversitesi",
+    "Yıldız Teknik Üniversitesi (YTÜ)",
+    "İstanbul Üniversitesi",
+    "Marmara Üniversitesi",
+    "Ankara Üniversitesi",
+    "Hacettepe Üniversitesi",
+    "Gazi Üniversitesi",
+    "Ege Üniversitesi",
+    "Dokuz Eylül Üniversitesi",
+    "Anadolu Üniversitesi",
+    "Akdeniz Üniversitesi",
+    "Bursa Uludağ Üniversitesi",
+    "Kocaeli Üniversitesi",
+    "Sakarya Üniversitesi",
+    "Karadeniz Teknik Üniversitesi (KTÜ)",
+    "Erciyes Üniversitesi",
+    "Çukurova Üniversitesi",
+    "Selçuk Üniversitesi",
+    "Diğer Üniversiteler"
+  ];
+
+  var CATS = [
+    "Bilgisayar ve Yazılım",
+    "Elektrik - Elektronik",
+    "Makine ve Mekatronik",
+    "İnşaat ve Mimarlık",
+    "Endüstri Mühendisliği",
+    "Tıp ve Sağlık Bilimleri",
+    "Hukuk",
+    "İktisat ve İşletme",
+    "Psikoloji ve Sosyoloji",
+    "Matematik ve Fizik",
+    "Kimya ve Biyoloji",
+    "Edebiyat ve Yabancı Diller",
+    "İletişim ve Tasarım",
+    "Eğitim Bilimleri",
+    "Temel Üniversite Dersleri"
+  ];
+
+  var PAL=[["#1d5fd1","#12408f"],["#0f8fb8","#0a5a86"],["#4a5bd8","#2a2f9a"],["#2563eb","#1e3a8a"],["#0ea5c6","#1d6fa5"],["#3b82f6","#1d4ed8"],["#8b5cf6","#5b21b6"],["#ec4899","#9d174d"]];
+  var AV=["#1d5fd1","#0f8fb8","#4a5bd8","#2a7fd4","#0ea5c6","#5b6fe0","#8b5cf6","#ec4899"];
   var $=function(i){return document.getElementById(i)};
   var db=null,assets=null,user=null,myId=null,canAdmin=false,notes=[],likes=[],bans={},reports=[],grade="",seen={},popId=null,nums={},members={},membersReady=false,authTab="login",sess=null,ITER=100000;
   function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-  CATS.forEach(function(c){["cat","fcat"].forEach(function(id){var o=el("option",null,c);o.value=c;$(id).appendChild(o)})});
+  
+  // Populate Universities dropdown
+  if($("uni")){
+    UNIS.forEach(function(u){
+      var o=el("option",null,u);o.value=u;$("uni").appendChild(o);
+    });
+  }
+
+  // Populate Categories dropdowns
+  CATS.forEach(function(c){
+    ["cat","fcat"].forEach(function(id){
+      var target=$(id);
+      if(target){var o=el("option",null,c);o.value=c;target.appendChild(o)}
+    });
+  });
+
   function fmt(b){return b>1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB"}
   function ago(iso){if(!iso)return"";var s=(Date.now()-new Date(iso))/1000;
     if(s<60)return"az önce";if(s<3600)return Math.floor(s/60)+" dk önce";if(s<86400)return Math.floor(s/3600)+" sa önce";
     if(s<604800)return Math.floor(s/86400)+" gün önce";return new Date(iso).toLocaleDateString("tr-TR")}
   function setNum(id,v){
-    var e=$(id),from=nums[id]||0;nums[id]=v;
+    var e=$(id);if(!e)return;
+    var from=nums[id]||0;nums[id]=v;
     if(from===v||window.matchMedia("(prefers-reduced-motion: reduce)").matches){e.textContent=v;return}
     var t0=performance.now();
     (function step(t){var k=Math.min((t-t0)/600,1);e.textContent=Math.round(from+(v-from)*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)})(t0);
   }
-  function setMsg(t,c){var m=$("upMsg");m.textContent=t||"";m.className="msg "+(c||"")}
+  function setMsg(t,c){var m=$("upMsg");if(m){m.textContent=t||"";m.className="msg "+(c||"")}}
   function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
 
   function render(){
     var rep={},myRep={};reports.forEach(function(r){rep[r.note]=(rep[r.note]||0)+1;if(r.uid===myId)myRep[r.note]=1});
     var cnt={};likes.forEach(function(l){cnt[l.note]=(cnt[l.note]||0)+1});
     var mine={};likes.forEach(function(l){if(l.uid===myId)mine[l.note]=1});
+    
+    // Stats update
     setNum("sN",notes.length);
-    setNum("s1",notes.filter(function(n){return n.grade==="1. Sınıf"}).length);
-    setNum("s2",notes.filter(function(n){return n.grade==="2. Sınıf"}).length);
+    var uSet={};notes.forEach(function(n){if(n.uni)uSet[n.uni]=1});
+    setNum("sU",Math.max(Object.keys(uSet).length, UNIS.length));
+    setNum("sC",CATS.length);
+
     var q=$("q").value.trim().toLocaleLowerCase("tr"),c=$("fcat").value;
     var rows=notes.filter(function(n){
-      return !bans[n.uid]&&(!grade||n.grade===grade)&&(!c||n.cat===c)&&(!q||((n.title||"")+" "+(n.by||"")).toLocaleLowerCase("tr").indexOf(q)>-1)});
+      var matchText=((n.title||"")+" "+(n.by||"")+" "+(n.uni||"")+" "+(n.cat||"")).toLocaleLowerCase("tr");
+      return !bans[n.uid]&&(!grade||n.grade===grade)&&(!c||n.cat===c)&&(!q||matchText.indexOf(q)>-1);
+    });
+
     if($("sort").value==="pop")rows.sort(function(a,b){return (cnt[b.id]||0)-(cnt[a.id]||0)||(b.createdAt>a.createdAt?1:-1)});
     var f=$("feed");f.textContent="";
-    if(!rows.length){f.appendChild(el("div","empty",notes.length?"Bu filtreye uyan not yok.":"Henüz not paylaşılmadı. İlk notu sen paylaş!"));return}
+    if(!rows.length){f.appendChild(el("div","empty",notes.length?"Bu filtreye uyan ders notu yok.":"Henüz not paylaşılmadı. İlk notu üniversitenden sen paylaş!"));return}
+    
     rows.forEach(function(n){
       var p=el("article","post"),ph=el("div","ph");
       if(!seen[n.id]){seen[n.id]=1;p.classList.add("in");p.style.animationDelay=Math.min(rows.indexOf(n),8)*70+"ms"}
       var nm=n.by||"Anonim";
       var av=el("div","av",nm.trim().charAt(0).toLocaleUpperCase("tr"));av.style.background=AV[hash(nm)%AV.length];
-      var sp=el("div","sp");var nmE=el("div","nm lnk",nm);nmE.onclick=function(){openProfile(n.uid,nm)};sp.appendChild(nmE);sp.appendChild(el("div","tm",ago(n.createdAt)));
-      av.classList.add("lnk");av.onclick=function(){openProfile(n.uid,nm)};ph.appendChild(av);ph.appendChild(sp);if(n.grade)ph.appendChild(el("span","gr",n.grade));
+      var sp=el("div","sp");var nmE=el("div","nm lnk",nm);nmE.onclick=function(){openProfile(n.uid,nm)};sp.appendChild(nmE);
+      var subText=(n.uni?(n.uni.split("(")[0].trim()+" · "):"")+ago(n.createdAt);
+      sp.appendChild(el("div","tm",subText));
+      av.classList.add("lnk");av.onclick=function(){openProfile(n.uid,nm)};ph.appendChild(av);ph.appendChild(sp);
+      if(n.grade)ph.appendChild(el("span","gr",n.grade));
+      
       var g=PAL[hash(n.cat||"")%PAL.length];
       var fileUrl=n.url||"#";
       var cv=el("a","cover");cv.href=fileUrl;cv.target="_blank";cv.rel="noopener";
       cv.style.background="linear-gradient(145deg,"+g[0]+","+g[1]+")";
-      cv.appendChild(el("span","pdf","PDF"));cv.appendChild(el("div","ct",n.cat||"Ders"));cv.appendChild(el("div","tt",n.title||n.name||"Adsız not"));
+      cv.appendChild(el("span","pdf","PDF"));
+      cv.appendChild(el("div","ct",(n.uni?n.uni+" · ":"")+(n.cat||"Genel")));
+      cv.appendChild(el("div","tt",n.title||n.name||"Adsız not"));
       var pf=el("div","pf");
       var lk=el("button","like"+(mine[n.id]?" on":"")+(popId===n.id?" beat":""),(mine[n.id]?"♥ ":"♡ ")+(cnt[n.id]||0));
       lk.disabled=!myId;lk.title=myId?"Beğen":"Beğenmek için giriş yap";lk.onclick=function(){toggle(n.id,!!mine[n.id])};
@@ -102,13 +173,14 @@
     var m=myId&&members[myId];
     $("by").value=m?m.name:(canAdmin?"Yönetici":"");
     if(m&&m.grade)$("grade").value=m.grade;
+    if(m&&m.school&&$("uni")){$("uni").value=m.school}
   }
   function needMember(){
     var mc=$("memberCard");mc.scrollIntoView({behavior:"smooth",block:"center"});
     mc.classList.remove("flash");void mc.offsetWidth;mc.classList.add("flash");
   }
-  /* ===== GİRİŞ / ÜYELİK KATMANI =====
-     E-posta + şifre sistemi. Şifreler PBKDF2 ile hash'lenip veritabanına yazılır. */
+
+  /* ===== GİRİŞ / ÜYELİK KATMANI ===== */
   function hex(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ("0"+x.toString(16)).slice(-2)}).join("")}
   function unhex(s){var a=new Uint8Array(s.length/2);for(var i=0;i<a.length;i++)a[i]=parseInt(s.substr(i*2,2),16);return a}
   async function sha(s){return hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))}
@@ -141,10 +213,10 @@
       var id=await accId(email),a=members[id];
       if(!a||!a.salt||await pbk(pw,a.salt)!==a.hash){say("E-posta veya şifre hatalı.");return false}
       if(bans[id]){say("Hesabın engellendi.");return false}
-      startSession({id:id,name:a.name,grade:a.grade});return true;
+      startSession({id:id,name:a.name,grade:a.grade,school:a.school});return true;
     }catch(e){say("Giriş yapılamadı, tekrar dene.");return false}
   }
-  async function doRegister(name,email,pw,gr,say){
+  async function doRegister(name,email,pw,gr,school,say){
     email=normEmail(email);name=name.trim();
     if(name.length<3){say("Lütfen ad ve soyadını yaz.");return false}
     if(!EMAIL_RE.test(email)){say("Geçerli bir e-posta yaz.");return false}
@@ -155,8 +227,8 @@
       var id=await accId(email);
       if(members[id]){say("Bu e-posta ile zaten üyelik var, giriş yap.");return false}
       var salt=hex(crypto.getRandomValues(new Uint8Array(16))),hash=await pbk(pw,salt);
-      await db.collection("accounts").doc(id).set({name:name,grade:gr,salt:salt,hash:hash,at:new Date().toISOString()});
-      startSession({id:id,name:name,grade:gr});return true;
+      await db.collection("accounts").doc(id).set({name:name,grade:gr,school:school||"",salt:salt,hash:hash,at:new Date().toISOString()});
+      startSession({id:id,name:name,grade:gr,school:school});return true;
     }catch(e){say("Üyelik oluşturulamadı, tekrar dene.");return false}
   }
   function field(lbl,id,type,ph,ac){
@@ -173,7 +245,8 @@
       var nm=(sess&&sess.name)||"Üye";
       var w=el("div","who"),av=el("div","av",nm.charAt(0).toLocaleUpperCase("tr"));av.style.background=AV[hash(nm)%AV.length];
       var tx=el("div","sp");tx.appendChild(el("div","nm","Hoş geldin, "+nm));
-      tx.appendChild(el("div","tm",canAdmin?"Giriş yapıldı · 👑 Yönetici":"Giriş yapıldı · Üye ✓ · "+((sess&&sess.grade)||"")+" · Not paylaşabilirsin"));
+      var infoDetail=canAdmin?"👑 Yönetici":(sess&&sess.school?(sess.school+" · "):"")+((sess&&sess.grade)||"Öğrenci");
+      tx.appendChild(el("div","tm","Giriş yapıldı · "+infoDetail));
       var ex=el("button","ghostb","Çıkış yap");ex.onclick=logout;
       w.appendChild(av);w.appendChild(tx);w.appendChild(ex);b.appendChild(w);return;
     }
@@ -192,17 +265,21 @@
       var sw=el("p","lead","Hesabın yok mu? ");sw.style.marginTop="12px";var sl=el("a",null,"Üye ol");sl.href="#";sl.style.color="var(--blue)";sl.onclick=function(e){e.preventDefault();authTab="join";renderMember()};sw.appendChild(sl);b.appendChild(sw);
       return;
     }
-    b.appendChild(el("p","lead","Üyelik ücretsiz. Üye olmayanlar not paylaşamaz."));
+    b.appendChild(el("p","lead","Üyelik ücretsizdir. Tüm üniversite öğrencileri not paylaşabilir."));
     var r1=el("div","row");r1.appendChild(field("Ad Soyad","rn","text","Örn. Ayşe Yılmaz","name"));
-    var d2=el("div"),l2=el("label","l","Sınıf");l2.htmlFor="rg";var mg=el("select");mg.id="rg";["1. Sınıf","2. Sınıf"].forEach(function(x){mg.appendChild(el("option",null,x))});d2.appendChild(l2);d2.appendChild(mg);r1.appendChild(d2);b.appendChild(r1);
+    var d2=el("div"),l2=el("label","l","Sınıf");l2.htmlFor="rg";var mg=el("select");mg.id="rg";["1. Sınıf","2. Sınıf","3. Sınıf","4. Sınıf","Hazırlık / YL"].forEach(function(x){mg.appendChild(el("option",null,x))});d2.appendChild(l2);d2.appendChild(mg);r1.appendChild(d2);b.appendChild(r1);
+    
+    var dUni=el("div"),lUni=el("label","l","Üniversiten");lUni.htmlFor="ru";var mUni=el("select");mUni.id="ru";
+    UNIS.forEach(function(x){mUni.appendChild(el("option",null,x))});dUni.appendChild(lUni);dUni.appendChild(mUni);b.appendChild(dUni);
+
     var r2=el("div","row");r2.appendChild(field("E-posta","re","email","ornek@mail.com","username"));r2.appendChild(field("Şifre (en az 6 karakter)","rp","password","Şifre belirle","new-password"));b.appendChild(r2);
     var ck=el("label","chk"),cb=el("input");cb.type="checkbox";ck.appendChild(cb);
-    ck.appendChild(document.createTextNode(" Virüslü, zararlı veya uygunsuz dosya yüklemeyeceğimi kabul ediyorum."));b.appendChild(ck);
+    ck.appendChild(document.createTextNode(" Virüslü, zararlı veya telif ihlali içeren dosya yüklemeyeceğimi kabul ediyorum."));b.appendChild(ck);
     var bj=el("button",null,"Üye ol");bj.style.cssText="width:100%;margin-top:12px";
     bj.onclick=async function(){
       if(!cb.checked){say("Devam etmek için kuralı kabul etmelisin.");return}
       bj.disabled=true;say("Kaydediliyor…",true);
-      var ok=await doRegister($("rn").value,$("re").value,$("rp").value,mg.value,say);if(!ok)bj.disabled=false;
+      var ok=await doRegister($("rn").value,$("re").value,$("rp").value,mg.value,mUni.value,say);if(!ok)bj.disabled=false;
     };
     b.appendChild(bj);b.appendChild(ms);
   }
@@ -214,13 +291,16 @@
     var a=uid==="admin"?{name:"Yönetici"}:members[uid];
     var nm=(a&&a.name)||fallback||"Üye";
     var top=el("div","who"),av=el("div","av",nm.charAt(0).toLocaleUpperCase("tr"));av.style.background=AV[hash(nm)%AV.length];av.style.width=av.style.height="52px";av.style.fontSize="22px";
-    var tx=el("div","sp");tx.appendChild(el("div","nm",nm));tx.appendChild(el("div","tm",uid==="admin"?"👑 Yönetici":((a&&a.grade)||"")));
+    var tx=el("div","sp");tx.appendChild(el("div","nm",nm));tx.appendChild(el("div","tm",uid==="admin"?"👑 Yönetici":((a&&a.school?(a.school+" · "):"")+((a&&a.grade)||""))));
     top.appendChild(av);top.appendChild(tx);b.appendChild(top);
     if(uid!=="admin"){
-      if(a&&(a.school||a.grad||a.bio)){lineP(b,"🎓","Okuduğu yer",a.school);lineP(b,"🏫","Mezun olduğu okul",a.grad);if(a.bio)lineP(b,"📝","Hakkında",a.bio)}
-      else b.appendChild(el("p","lead","Bu üye henüz profil bilgisi eklememiş."));
+      if(a&&(a.school||a.dept||a.bio)){
+        if(a.school)lineP(b,"🎓","Üniversite",a.school);
+        if(a.dept)lineP(b,"🏫","Bölüm",a.dept);
+        if(a.bio)lineP(b,"📝","Hakkında",a.bio);
+      } else b.appendChild(el("p","lead","Bu öğrenci henüz detaylı profil bilgisi eklememiş."));
     }
-    if(d.showModal)d.showModal();else alert(nm+(a&&a.school?"\nOkuduğu yer: "+a.school:"")+(a&&a.grad?"\nMezun olduğu okul: "+a.grad:""));
+    if(d.showModal)d.showModal();else alert(nm+(a&&a.school?"\nOkul: "+a.school:""));
   }
   function renderProfile(){
     var card=$("profileCard"),me=myId&&!canAdmin&&members[myId];
@@ -229,24 +309,27 @@
     if(card.dataset.built===myId)return;
     card.dataset.built=myId;
     var b=$("profileBody");b.textContent="";
-    b.appendChild(el("p","lead","Bilgilerini doldur, diğer üyeler notlarında adına dokununca profilini görsün."));
+    b.appendChild(el("p","lead","Profil bilgilerini güncelle, paylaştığın notlarda arkadaşların senin hangi üniversite ve bölümde olduğunu görsün."));
     var r1=el("div","row");r1.appendChild(field("Ad Soyad","pn","text","Ad Soyad","name"));
-    var d2=el("div"),l2=el("label","l","Sınıf");l2.htmlFor="pg";var pg=el("select");pg.id="pg";["1. Sınıf","2. Sınıf"].forEach(function(x){pg.appendChild(el("option",null,x))});d2.appendChild(l2);d2.appendChild(pg);r1.appendChild(d2);b.appendChild(r1);
-    b.appendChild(field("Okuduğum yer","ps","text","Örn. … Üniversitesi, Hibrit Elektrikli Araçlar Bölümü"));
-    b.appendChild(field("Mezun olduğum okul","pm","text","Örn. … Anadolu Lisesi"));
+    var d2=el("div"),l2=el("label","l","Sınıf");l2.htmlFor="pg";var pg=el("select");pg.id="pg";["1. Sınıf","2. Sınıf","3. Sınıf","4. Sınıf","Hazırlık / YL"].forEach(function(x){pg.appendChild(el("option",null,x))});d2.appendChild(l2);d2.appendChild(pg);r1.appendChild(d2);b.appendChild(r1);
+    
+    var dUni=el("div"),lUni=el("label","l","Üniversiten");lUni.htmlFor="ps";var ps=el("select");ps.id="ps";
+    UNIS.forEach(function(x){ps.appendChild(el("option",null,x))});dUni.appendChild(lUni);dUni.appendChild(ps);b.appendChild(dUni);
+
+    b.appendChild(field("Bölümün","pd","text","Örn. Bilgisayar Mühendisliği"));
     var d3=el("div"),l3=el("label","l","Hakkımda (isteğe bağlı)");l3.htmlFor="pb";var ta=el("textarea");ta.id="pb";ta.rows=3;ta.maxLength=200;ta.placeholder="Kendini kısaca tanıt";d3.appendChild(l3);d3.appendChild(ta);b.appendChild(d3);
-    $("pn").value=me.name||"";pg.value=me.grade||"1. Sınıf";$("ps").value=me.school||"";$("pm").value=me.grad||"";ta.value=me.bio||"";
+    $("pn").value=me.name||"";pg.value=me.grade||"1. Sınıf";if(me.school)ps.value=me.school;$("pd").value=me.dept||"";ta.value=me.bio||"";
     var bt=el("button",null,"Profilimi kaydet");bt.style.cssText="width:100%;margin-top:12px";
     var ms=el("div","msg");
     bt.onclick=async function(){
       var n=$("pn").value.trim();
       if(n.length<3){ms.className="msg err";ms.textContent="Lütfen ad ve soyadını yaz.";return}
       var cur=members[myId]||{},d={};for(var k in cur)d[k]=cur[k];
-      d.name=n;d.grade=pg.value;d.school=$("ps").value.trim();d.grad=$("pm").value.trim();d.bio=ta.value.trim();
+      d.name=n;d.grade=pg.value;d.school=ps.value;d.dept=$("pd").value.trim();d.bio=ta.value.trim();
       bt.disabled=true;ms.className="msg";ms.textContent="Kaydediliyor…";
       try{
         await db.collection("accounts").doc(myId).set(d);
-        sess.name=d.name;sess.grade=d.grade;saveSess(sess);
+        sess.name=d.name;sess.grade=d.grade;sess.school=d.school;saveSess(sess);
         ms.className="msg ok";ms.textContent="Profilin kaydedildi ✓";fillUploader();renderMember();
       }catch(e){ms.className="msg err";ms.textContent="Kaydedilemedi, tekrar dene."}
       bt.disabled=false;
@@ -261,7 +344,8 @@
     if(!ids.length){l.appendChild(el("div","empty","Henüz üye yok."));return}
     ids.forEach(function(id){
       var m=members[id],r=el("div","mrow");
-      var t=el("div","sp");t.appendChild(el("b",null,m.name||"Adsız"));t.appendChild(el("span","tm"," · "+(m.grade||"")+" · "+ago(m.at)));
+      var t=el("div","sp");t.appendChild(el("b",null,m.name||"Adsız"));
+      t.appendChild(el("span","tm"," · "+(m.school?(m.school+" · "):"")+(m.grade||"")+" · "+ago(m.at)));
       var x=el("button","del","Çıkar");x.onclick=async function(){if(!confirm((m.name||"Bu üye")+" üyelikten çıkarılsın mı?"))return;try{await db.collection("accounts").doc(id).delete()}catch(e){alert("Başarısız oldu.")}};
       r.appendChild(t);r.appendChild(x);l.appendChild(r);
     });
@@ -282,6 +366,7 @@
     }catch(e){alert("Yasaklama başarısız oldu.")}
   }
   function updateBan(){if(myId&&bans[myId]){$("send").disabled=true;setMsg("Paylaşım yetkin kaldırıldı.","err")}}
+  
   async function upload(){
     if(myId&&bans[myId]){updateBan();return}
     if(!isMember()){setMsg("Not paylaşmak için önce üye olmalısın.","err");needMember();return}
@@ -296,6 +381,7 @@
       var r=await assets.upload(f,{type:"application/pdf"});
       await db.collection("notes").add({
         title:t,
+        uni:$("uni")?$("uni").value:"",
         grade:$("grade").value,
         cat:$("cat").value,
         by:$("by").value.trim(),
@@ -312,6 +398,7 @@
       var c=e&&e.code;setMsg(c==="too_large"?"Dosya çok büyük.":c==="quota_or_state"?"Depolama alanı dolu.":c==="rate_limited"?"Çok sık denedin, biraz bekle.":"Yükleme başarısız oldu.","err");
     }finally{b.disabled=false}
   }
+
   function syncTabs(){[].forEach.call($("tabs").children,function(b){b.classList.toggle("on",b.dataset.g===grade)})}
   [].forEach.call($("tabs").children,function(b){b.onclick=function(){grade=b.dataset.g;seen={};syncTabs();render()}});
   $("q").oninput=render;$("fcat").onchange=function(){seen={};render()};$("sort").onchange=function(){seen={};render()};$("send").onclick=upload;
@@ -513,15 +600,24 @@
     db.collection("likes").onSnapshot(function(s){likes=s.docs.map(function(d){return d.data()||{}});render()},function(){});
     db.collection("bans").onSnapshot(function(s){bans={};s.docs.forEach(function(d){bans[d.id]=true});updateBan();renderMember();render()},function(){});
     db.collection("accounts").onSnapshot(function(s){members={};s.docs.forEach(function(d){members[d.id]=d.data()||{}});membersReady=true;
-      if(sess&&!sess.admin){if(!members[sess.id]){logout();return}sess.name=members[sess.id].name;sess.grade=members[sess.id].grade}
+      if(sess&&!sess.admin){if(!members[sess.id]){logout();return}sess.name=members[sess.id].name;sess.grade=members[sess.id].grade;sess.school=members[sess.id].school}
       renderMember();renderProfile();renderAdmin();fillUploader();
       if(!isMember()&&!$("uploadCard").hidden){$("uploadCard").hidden=true;$("toggleUp").textContent="＋ Not paylaş"}
     },function(){membersReady=true;renderMember()});
     db.collection("reports").onSnapshot(function(s){reports=s.docs.map(function(d){return d.data()||{}});render()},function(){});
   }
 
-  CATS.forEach(function(cn){var b=el("button","chip",cn);b.onclick=function(){
-    $("fcat").value=cn;seen={};render();$("feedCard").scrollIntoView({behavior:"smooth",block:"start"})};$("chips").appendChild(b)});
+  CATS.forEach(function(cn){
+    var chipsEl=$("chips");
+    if(chipsEl){
+      var b=el("button","chip",cn);
+      b.onclick=function(){
+        $("fcat").value=cn;seen={};render();$("feedCard").scrollIntoView({behavior:"smooth",block:"start"})
+      };
+      chipsEl.appendChild(b);
+    }
+  });
+
   function setTheme(t,anim){
     var r=document.documentElement;
     if(anim){r.classList.add("tt");setTimeout(function(){r.classList.remove("tt")},500)}
