@@ -197,50 +197,79 @@ dialog::backdrop{background:rgba(15,37,66,.45)}
 #themeBtn:hover:not(:disabled){background:rgba(255,255,255,.3)}
 .tt,.tt *{transition:background-color .4s,color .4s,border-color .4s,box-shadow .4s!important}
 
-/* ===== Koyu neon yeşil tema ===== */
-@keyframes neonPulse{from{text-shadow:0 0 10px rgba(0,255,136,.35)}to{text-shadow:0 0 24px rgba(0,255,136,.9),0 0 44px rgba(0,255,136,.35)}}
-:root[data-theme="neon"]{--soft:#0b1a13;--text:#d9ffe9;--muted:#7fb89a;--blue:#00ff88;--blue-d:#00d974;--blue-l:#0f2a1e;--line:#17482f;--danger:#ff5c7a;--on-blue:#03170d;color-scheme:dark}
-[data-theme="neon"] body{background:#050a07;color:var(--text)}
-[data-theme="neon"] .hero{background:linear-gradient(135deg,#031a10,#06301d,#0a4a2c,#031a10);background-size:300% 300%;box-shadow:0 8px 50px rgba(0,255,136,.22);border-bottom:1px solid rgba(0,255,136,.4)}
-[data-theme="neon"] .hero h1{color:#eafff4;animation:fadeUp .7s both,neonPulse 2.6s ease-in-out infinite alternate}
-[data-theme="neon"] .hero p,[data-theme="neon"] .stat span,[data-theme="neon"] .credit{color:#9cf5c6}
-[data-theme="neon"] .credit b,[data-theme="neon"] .stat b{color:#00ff88}
-[data-theme="neon"] .stat{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.3)}
-[data-theme="neon"] .stat:hover{background:rgba(0,255,136,.16)}
-[data-theme="neon"] #themeBtn{background:rgba(0,255,136,.1);color:#00ff88;border-color:#00ff88;box-shadow:0 0 14px rgba(0,255,136,.35)}
-[data-theme="neon"] #themeBtn:hover:not(:disabled){background:rgba(0,255,136,.22)}
-[data-theme="neon"] .card{background:#08130d;border-color:var(--line);box-shadow:0 0 0 1px rgba(0,255,136,.05),0 10px 32px rgba(0,255,136,.07)}
-[data-theme="neon"] input,[data-theme="neon"] select,[data-theme="neon"] textarea{background:#050e09;color:var(--text);border-color:var(--line)}
-[data-theme="neon"] input::placeholder,[data-theme="neon"] textarea::placeholder{color:#4f8567}
-[data-theme="neon"] input:focus,[data-theme="neon"] select:focus,[data-theme="neon"] textarea:focus{outline-color:#00ff88;border-color:#00ff88;box-shadow:0 0 12px rgba(0,255,136,.35)}
-[data-theme="neon"] #by[readonly]{background:var(--soft);color:var(--muted)}
-[data-theme="neon"] .drop{background:#060f0a;border-color:#1f6b46}
-[data-theme="neon"] .drop:hover,[data-theme="neon"] .drop.over{background:var(--blue-l);border-color:#00ff88}
-[data-theme="neon"] .tabs{background:#050e09;border-color:var(--line)}
-[data-theme="neon"] .tabs button.on,[data-theme="neon"] #send,[data-theme="neon"] #memberBody > button,[data-theme="neon"] #profileBody > button,[data-theme="neon"] .btnlink{box-shadow:0 0 16px rgba(0,255,136,.4)}
-[data-theme="neon"] .share{background:transparent;color:#00ff88;border-color:#00ff88}
-[data-theme="neon"] .share:hover:not(:disabled){background:rgba(0,255,136,.14)!important;box-shadow:0 0 16px rgba(0,255,136,.35)}
-[data-theme="neon"] .post{background:#08130d;border-color:var(--line)}
-[data-theme="neon"] .post:hover{box-shadow:0 0 0 1px #00ff88,0 14px 34px rgba(0,255,136,.22)}
-[data-theme="neon"] .cover{background:linear-gradient(145deg,#06301d,#020a06)!important;box-shadow:inset 0 0 50px rgba(0,255,136,.14)}
-[data-theme="neon"] .post:nth-child(3n+2) .cover{background:linear-gradient(145deg,#053a32,#020a09)!important}
-[data-theme="neon"] .post:nth-child(3n) .cover{background:linear-gradient(145deg,#1d3a06,#050a02)!important}
-[data-theme="neon"] .cover .pdf{background:rgba(0,255,136,.15);color:#00ff88;border:1px solid rgba(0,255,136,.5)}
-[data-theme="neon"] .cover .ct{color:#7dffbd}
-[data-theme="neon"] .cover .tt{color:#eafff4;text-shadow:0 0 14px rgba(0,255,136,.55)}
-[data-theme="neon"] .gr,[data-theme="neon"] .tag{background:var(--blue-l);color:#00ff88;border:1px solid rgba(0,255,136,.35)}
-[data-theme="neon"] .like.on{color:#00ff88}
-[data-theme="neon"] .like:hover:not(:disabled){background:rgba(0,255,136,.1)}
-[data-theme="neon"] .del:hover:not(:disabled){background:rgba(255,92,122,.15)}
-[data-theme="neon"] .info{background:#08130d}
-[data-theme="neon"] .info b,[data-theme="neon"] .tile b{color:#00ff88}
-[data-theme="neon"] .info:hover{box-shadow:0 6px 22px rgba(0,255,136,.18)}
-[data-theme="neon"] .chip{background:var(--blue-l);color:#00ff88;border-color:var(--line)}
-[data-theme="neon"] .chip:hover:not(:disabled){box-shadow:0 0 14px rgba(0,255,136,.5)}
-[data-theme="neon"] summary{color:#00ff88}
-[data-theme="neon"] .msg.ok{color:#00ff88}
-[data-theme="neon"] dialog{background:#08130d;color:var(--text);border:1px solid #00ff88;box-shadow:0 0 40px rgba(0,255,136,.3)}
-[data-theme="neon"] dialog::backdrop{background:rgba(0,0,0,.7)}
-[data-theme="neon"] .lead,[data-theme="neon"] footer{color:var(--muted)}
-[data-theme="neon"] footer b{color:#00ff88}
-[data-theme="neon"] .av{background:linear-gradient(135deg,#00ff88,#00b866)!important;color:#03170d;box-shadow:0 0 12px rgba(0,255,136,.45)}
+/* ===== Koyu siyah/beyaz tema ===== */
+/* Logo */
+.logo-wrap{display:flex;justify-content:center;margin-bottom:4px}
+.site-logo{width:110px;height:110px;object-fit:contain;border-radius:12px;display:block}
+
+:root[data-theme="neon"]{--soft:#111;--text:#fff;--muted:#aaa;--blue:#fff;--blue-d:#ccc;--blue-l:#222;--line:#333;--danger:#ff4444;--on-blue:#000;color-scheme:dark}
+[data-theme="neon"] body{background:#000;color:#fff}
+[data-theme="neon"] .hero{background:#000!important;animation:none!important;border-bottom:1px solid #333;box-shadow:none}
+[data-theme="neon"] .hero h1{color:#fff;animation:fadeUp .7s both}
+[data-theme="neon"] .hero p,[data-theme="neon"] .stat span,[data-theme="neon"] .credit{color:#aaa}
+[data-theme="neon"] .credit b,[data-theme="neon"] .stat b{color:#fff}
+[data-theme="neon"] .badge{background:rgba(255,255,255,.12);color:#fff}
+[data-theme="neon"] .stat{background:rgba(255,255,255,.07);border:1px solid #333}
+[data-theme="neon"] .stat:hover{background:rgba(255,255,255,.14)}
+[data-theme="neon"] #themeBtn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.5)}
+[data-theme="neon"] #themeBtn:hover:not(:disabled){background:rgba(255,255,255,.2)}
+[data-theme="neon"] .card{background:#111;border-color:#333;box-shadow:none}
+[data-theme="neon"] input,[data-theme="neon"] select,[data-theme="neon"] textarea{background:#111;color:#fff;border-color:#444}
+[data-theme="neon"] input::placeholder,[data-theme="neon"] textarea::placeholder{color:#666}
+[data-theme="neon"] input:focus,[data-theme="neon"] select:focus,[data-theme="neon"] textarea:focus{outline-color:#fff;border-color:#fff}
+[data-theme="neon"] #by[readonly]{background:#222;color:#888}
+[data-theme="neon"] .drop{background:#111;border-color:#444}
+[data-theme="neon"] .drop:hover,[data-theme="neon"] .drop.over{background:#222;border-color:#fff}
+[data-theme="neon"] .drop strong{color:#fff}
+[data-theme="neon"] .tabs{background:#111;border-color:#333}
+[data-theme="neon"] .tabs button{color:#aaa}
+[data-theme="neon"] .tabs button.on{background:#fff;color:#000}
+[data-theme="neon"] .tabs button:hover:not(:disabled):not(.on){background:#222;color:#fff}
+[data-theme="neon"] button{background:#fff;color:#000}
+[data-theme="neon"] button:hover:not(:disabled){background:#ddd}
+[data-theme="neon"] #send,[data-theme="neon"] #memberBody > button,[data-theme="neon"] #profileBody > button,[data-theme="neon"] .btnlink{background:#fff;color:#000}
+[data-theme="neon"] .share{background:transparent;color:#fff;border-color:#fff}
+[data-theme="neon"] .share:hover:not(:disabled){background:rgba(255,255,255,.12)!important}
+[data-theme="neon"] .post{background:#111;border-color:#333}
+[data-theme="neon"] .post:hover{box-shadow:0 0 0 1px #555,0 14px 34px rgba(255,255,255,.08)}
+[data-theme="neon"] .cover{background:linear-gradient(145deg,#1a1a1a,#000)!important}
+[data-theme="neon"] .post:nth-child(3n+2) .cover{background:linear-gradient(145deg,#1c1c1c,#050505)!important}
+[data-theme="neon"] .post:nth-child(3n) .cover{background:linear-gradient(145deg,#161616,#020202)!important}
+[data-theme="neon"] .cover .pdf{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)}
+[data-theme="neon"] .cover .ct{color:#ccc}
+[data-theme="neon"] .cover .tt{color:#fff;text-shadow:none}
+[data-theme="neon"] .gr,[data-theme="neon"] .tag{background:#222;color:#fff;border:1px solid #444}
+[data-theme="neon"] .like.on{color:#e0245e}
+[data-theme="neon"] .like:hover:not(:disabled){background:rgba(255,255,255,.08)}
+[data-theme="neon"] .del{color:#ff4444}
+[data-theme="neon"] .del:hover:not(:disabled){background:rgba(255,68,68,.15)}
+[data-theme="neon"] .flag:hover:not(:disabled){background:#222}
+[data-theme="neon"] .info{background:#111;border-color:#333;border-left-color:#555}
+[data-theme="neon"] .info b{color:#fff}
+[data-theme="neon"] .info p{color:#aaa}
+[data-theme="neon"] .info:hover{box-shadow:0 6px 16px rgba(255,255,255,.06)}
+[data-theme="neon"] .tile{background:#111;border-color:#333;color:#fff}
+[data-theme="neon"] .tile b{color:#fff}
+[data-theme="neon"] .tile span{color:#aaa}
+[data-theme="neon"] .tile:hover:not(:disabled){background:#222;border-color:#666}
+[data-theme="neon"] .chip{background:#222;color:#fff;border-color:#444}
+[data-theme="neon"] .chip:hover:not(:disabled){background:#fff;color:#000}
+[data-theme="neon"] summary{color:#ccc}
+[data-theme="neon"] details{border-top-color:#333}
+[data-theme="neon"] .msg.ok{color:#66ee88}
+[data-theme="neon"] .msg.err{color:#ff4444}
+[data-theme="neon"] dialog{background:#111;color:#fff;border:1px solid #444;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+[data-theme="neon"] dialog::backdrop{background:rgba(0,0,0,.8)}
+[data-theme="neon"] .lead,[data-theme="neon"] footer{color:#aaa}
+[data-theme="neon"] footer b{color:#fff}
+[data-theme="neon"] .ghostb{color:#aaa;border-color:#333}
+[data-theme="neon"] .ghostb:hover:not(:disabled){background:#222;color:#ff4444}
+[data-theme="neon"] .mrow{border-top-color:#333}
+[data-theme="neon"] .pf a{color:#ccc}
+[data-theme="neon"] .pf a:hover{background:#222}
+[data-theme="neon"] .pline{border-top-color:#333}
+[data-theme="neon"] .pl{color:#888}
+[data-theme="neon"] .av{background:linear-gradient(135deg,#444,#222)!important;color:#fff;box-shadow:none}
+[data-theme="neon"] .nm.lnk:hover{color:#ccc}
+[data-theme="neon"] h2{color:#fff}
+[data-theme="neon"] .bar .share{color:#fff;border-color:#555}
